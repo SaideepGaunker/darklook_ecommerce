@@ -1,0 +1,268 @@
+<?php
+session_start();
+require "db_con.php"; // Database connection
+
+// Database connection check
+if ($conn->connect_error) {
+    die('Connection failed: ' . $conn->connect_error);
+}
+
+// Check if the user is logged in
+if (isset($_GET['id'])) {
+  $product_id = $_GET['id'];
+
+  // Fetch products added to cart by the user
+  $query = "SELECT * FROM product WHERE id = ?";
+  $stmt = $conn->prepare($query);
+  $stmt->bind_param("i", $product_id);
+  $stmt->execute();
+  $result = $stmt->get_result();
+}
+else {
+    $error = "Please log in to view your cart.";
+    header ("Location: /DARKLOOK/login.html?msg=$error");
+}
+?>
+<!DOCTYPE html>
+<!--[if (gte IE 9)|!(IE)]><!-->
+<html lang="en">
+<!--<![endif]-->
+
+<head>
+  <!-- =====  BASIC PAGE NEEDS  ===== -->
+  <meta charset="utf-8">
+  <title>Dark look E-commerce Bootstrap Template</title>
+  <!-- =====  SEO MATE  ===== -->
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  <meta name="distribution" content="global">
+  <meta name="revisit-after" content="2 Days">
+  <meta name="robots" content="ALL">
+  <meta name="rating" content="8 YEARS">
+  <meta name="Language" content="en-us">
+  <meta name="GOOGLEBOT" content="NOARCHIVE">
+  <!-- =====  MOBILE SPECIFICATION  ===== -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="viewport" content="width=device-width">
+  <!-- =====  CSS  ===== -->
+  <link rel="stylesheet" type="text/css" href="css/font-awesome.min.css" />
+  <link rel="stylesheet" type="text/css" href="css/bootstrap.css" />
+  <link rel="stylesheet" type="text/css" href="css/style.css">
+  <link rel="stylesheet" type="text/css" href="css/magnific-popup.css">
+  <link rel="stylesheet" type="text/css" href="css/owl.carousel.css">
+  <link rel="shortcut icon" href="images/favicon.png">
+  <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+  <link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
+  <link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">
+  <style>
+    .about {
+      align-items: center;
+      margin-left: 13%;
+      margin-right: 10%;
+    }
+  </style>
+</head>
+
+<body class="shop-detail">
+  <!-- =====  LODER  ===== -->
+  <div class="loder"></div>
+  <div class="wrapper">
+    <!-- =====  HEADER START  ===== -->
+    <header id="header">
+      <div class="header-top">
+        <div class="container">
+          <div class="row">
+            <div class="col-xs-12 col-sm-4">
+              <div class="header-top-left">
+                <div class="contact"><span class="hidden-xs hidden-sm hidden-md"></span></div>
+              </div>
+            </div>
+            <div class="col-xs-12 col-sm-8">
+              <ul class="header-top-right text-right">
+                <li class="account"><a href="login.html">My Account</a></li>
+                <li class="language dropdown"> <span class="dropdown-toggle" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" role="button">Language <span class="caret"></span> </span>
+                  <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                    <li><a href="#">English</a></li>
+                  </ul>
+                </li>
+                <li class="currency dropdown"> <span class="dropdown-toggle" id="dropdownMenu12" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" role="button">Currency <span class="caret"></span> </span>
+                  <ul class="dropdown-menu" aria-labelledby="dropdownMenu12">
+                    <li><a href="#">€ Euro</a></li>
+                  </ul>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="header">
+        <div class="container">
+          <div class="row">
+            <!-- logo -->
+            <div class="col-xs-12 col-sm-4"></div>
+            <div class="navbar-header col-xs-6 col-sm-4"> <a class="navbar-brand" href="index.html"> <img alt="themini" src="images/logo.png"> </a> </div>
+            <div class="col-xs-6 col-sm-4 shopcart"></div>
+          </div>
+          <nav class="navbar">
+            <p>menu</p>
+            <button class="navbar-toggle" type="button" data-toggle="collapse" data-target=".js-navbar-collapse"> <span class="i-bar"><i class="fa fa-bars"></i></span></button>
+            <div class="collapse navbar-collapse js-navbar-collapse">
+              <ul id="menu" class="nav navbar-nav">
+                <li> <a href="index.html">Home</a></li>
+                <li> <a href="category_page.html">Shop</a></li>
+                <li> <a href="cart_page.html">Cart</a></li>
+                <li> <a href="wishlist.html">Wishlist</a></li>
+                <li> <a href="contact.html">Contact us</a></li>
+              </ul>
+            </div>
+            <!-- /.nav-collapse -->
+          </nav>
+        </div>
+      </div>
+    </header>
+    <!-- =====  HEADER END  ===== -->
+
+    <!-- =====  CONTAINER START  ===== -->
+    <div class="container">
+      <div class="row "> 
+         <!-- =====  BANNER STRAT  ===== -->
+        <?php if ($result->num_rows > 0 && $product = $result->fetch_assoc()) { ?>
+        <div class="col-sm-12">
+          <div class="breadcrumb ptb_20">
+            <h1><?php echo htmlspecialchars($product['product_name']);?></h1>
+            <ul>
+              <li><a href="index.html">Home</a></li>
+              <li><a href="category_page.html">Products</a></li>
+            </ul>
+          </div>
+        </div>
+        <!-- =====  BREADCRUMB END===== -->
+      
+        <div class="col-sm-8 col-lg-9 mtb_20 about">
+          <div class="row mt_10 ">
+           
+            <div class="col-md-6">
+              <div><a class="thumbnails"> <img data-name="product_image" src="images/product/product1.jpg" alt="" /></a></div>
+            </div>
+            <div class="col-md-6 prodetail caption product-thumb">
+              <h4 data-name="product_name" class="product-name"><a href="#" title="Casual Shirt With Ruffle Hem"><?php echo htmlspecialchars($product['product_name']);?></a></h4>
+              <span class="price mb_20"><span class="amount"><span class="currencySymbol">$</span><?php echo htmlspecialchars($product['price']);?></span>
+              </span>
+              <hr>
+              <ul class="list-unstyled product_info mtb_20">
+                <li>
+                  <label>Brand:</label>
+                  <span> <a href="#"><?php echo htmlspecialchars($product['brand']);?></a></span></li>
+                <li>
+                  <label>Product Code:</label>
+                  <span> <?php echo htmlspecialchars($product['model']);?></span></li>
+                <li>
+                  <label>Availability:</label>
+                  <span> In Stock</span></li>
+              </ul>
+              <hr>
+              <p class="product-desc mtb_30"><?php echo htmlspecialchars($product['desc']);?></p>
+              <div id="product">
+                <div class="form-group">
+                  <div class="row">
+                    <div class="Sort-by col-md-6">
+                      <label>Material</label>
+                      <select name="product_size" id="select-by-size" class="selectpicker form-control">
+                        <option><?php echo htmlspecialchars($product['material']);?></option>
+                      </select>
+                    </div>
+                    <div class="Color col-md-6">
+                      <label>Color</label>
+                      <select name="product_color" id="select-by-color" class="selectpicker form-control">
+                        <option><?php echo htmlspecialchars($product['color']);?></option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                <div class="qty mt_30 form-group2">
+                  <label>Qty</label>
+                  <input name="product_quantity" min="1" value="1" type="number">
+                </div>
+                <br><hr><br>
+                  <div class="caption product-detail text-center">
+                  <div class="col-xs-6" style="text-align: left; "><a href="wishlist.php?id=<?php echo $product['id']; ?>"><button
+                        type="button" class="btn btn-dark" style="border-radius: 120px; background-color: rgb(142, 142 ,142);">
+                        <span>Wishlist</span></button></a></div>
+                  <div class="col-xs-6" style="text-align: left;"><a
+                      href="add_to_cart.php?id=<?php echo $product['id']; ?>&price=<?php echo $product['price']; ?>"><button type="button"
+                        class="btn btn-dark" style="border-radius: 120px;background-color: rgb(142, 142 ,142);"> <span>Add To
+                          Cart</span></button></a></div>
+                </div>
+              </div>
+            </div>
+            <?php }else {?>
+              <div class="col-xs-6" style="text-align: right;">No product found ! !</div>
+              <?php } ?>
+          </div> 
+          <!-- review -->
+          <!-- <div class="row">
+            <div class="col-md-12">
+              <div id="exTab5" class="mtb_30">
+                <ul class="nav nav-tabs">
+                  <li class="active"> <a href="#1c" data-toggle="tab">Review</a> </li>
+                </ul>
+                <div class="tab-content ">
+                  <div class="tab-pane active pt_20" id="1c">
+                 <form class="form-horizontal">
+                      <div id="review"></div>
+                      <h4 class="mt_20 mb_30">Write a review</h4>
+                      <div class="form-group required">
+                        <div class="col-sm-12">
+                          <label class="control-label" for="input-name">Your Name</label>
+                          <input name="name" value="" id="input-name" class="form-control" type="text">
+                        </div>
+                      </div>
+                      <div class="form-group required">
+                        <div class="col-sm-12">
+                          <label class="control-label" for="input-review">Your Review</label>
+                          <textarea name="text" rows="5" id="input-review" class="form-control"></textarea>
+                          <div class="help-block"><span class="text-danger">Note:</span> HTML is not translated!</div>
+                        </div>
+                      </div>
+                      <div class="form-group required">
+                        <div class="col-md-6">
+                          <label class="control-label">Rating</label>
+                          <div class="rates"><span>Bad</span>
+                            <input name="rating" value="1" type="radio">
+                            <input name="rating" value="2" type="radio">
+                            <input name="rating" value="3" type="radio">
+                            <input name="rating" value="4" type="radio">
+                            <input name="rating" value="5" type="radio">
+                            <span>Good</span></div>
+                        </div>
+                        <div class="col-md-6">
+                          <div class="buttons pull-right">
+                            <button type="submit" class="btn btn-md btn-link">Continue</button>
+                          </div>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div> -->       
+        </div>
+      </div>
+      
+    </div>
+    <!-- =====  CONTAINER END  ===== -->
+
+
+
+  </div>
+  <a id="scrollup"></a>
+  <script src="js/jQuery_v3.1.1.min.js"></script>
+  <script src="js/owl.carousel.min.js"></script>
+  <script src="js/bootstrap.min.js"></script>
+  <script src="js/jquery.magnific-popup.js"></script>
+  <script src="js/custom.js"></script>
+</body>
+
+</html>

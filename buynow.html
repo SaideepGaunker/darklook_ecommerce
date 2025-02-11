@@ -1,0 +1,152 @@
+<?php 
+session_start();
+require "db_con.php";
+
+// Ensure session variable is set
+if (!isset($_SESSION['user_id'])) {
+    die("User is not logged in.");
+}
+
+// Check database connection
+if ($conn->connect_error) {
+    die('Connection failed: ' . $conn->connect_error);
+}
+
+// Prepare and execute the query
+$user = $_SESSION['user_id'];
+$query = "SELECT * FROM user_detail WHERE user_id = ?";
+$stmt = $conn->prepare($query);
+
+// Check if the statement was prepared successfully
+if ($stmt === false) {
+    die("Prepare failed: " . $conn->error);
+}
+
+$stmt->bind_param("i", $user);
+$stmt->execute();
+$result = $stmt->get_result();
+
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- =====  BASIC PAGE NEEDS  ===== -->
+  <meta charset="utf-8">
+  <title>Dark look E-commerce Bootstrap Template</title>
+  <!-- =====  SEO MATE  ===== -->
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  <meta name="distribution" content="global">
+  <meta name="revisit-after" content="2 Days">
+  <meta name="robots" content="ALL">
+  <meta name="rating" content="8 YEARS">
+  <meta name="Language" content="en-us">
+  <meta name="GOOGLEBOT" content="NOARCHIVE">
+  <!-- =====  MOBILE SPECIFICATION  ===== -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="viewport" content="width=device-width">
+  <!-- =====  CSS  ===== -->
+  <link rel="stylesheet" type="text/css" href="css/font-awesome.min.css" />
+  <link rel="stylesheet" type="text/css" href="css/bootstrap.css" />
+  <link rel="stylesheet" type="text/css" href="css/style.css">
+  <link rel="stylesheet" type="text/css" href="css/magnific-popup.css">
+  <link rel="stylesheet" type="text/css" href="css/owl.carousel.css">
+  <link rel="shortcut icon" href="images/favicon.png">
+  <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+  <link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
+  <link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">
+  <style>
+    .about{
+      align-items: center;
+      margin-left: 13%;
+      margin-right: 10%;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- =====  LODER  ===== -->
+  <div class="loder"></div>
+  <div class="wrapper">
+    <!-- =====  HEADER START  ===== -->
+    <header id="header">
+      <div class="header-top">
+        <div class="container">
+          <div class="row">
+            <div class="col-xs-12 col-sm-4">
+              <div class="header-top-left">
+                <div class="contact"><span class="hidden-xs hidden-sm hidden-md"></span></div>
+              </div>
+            </div>
+            <div class="col-xs-12 col-sm-8">
+              <ul class="header-top-right text-right">
+                <li class="account"><a href="login.html">My Account</a></li>
+                <li class="language dropdown"> <span class="dropdown-toggle" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" role="button">Language <span class="caret"></span> </span>
+                  <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                    <li><a href="#">English</a></li>
+                  </ul>
+                </li>
+                <li class="currency dropdown"> <span class="dropdown-toggle" id="dropdownMenu12" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" role="button">Currency <span class="caret"></span> </span>
+                  <ul class="dropdown-menu" aria-labelledby="dropdownMenu12">
+                    <li><a href="#">€ Euro</a></li>
+                  </ul>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="header">
+        <div class="container">
+          <div class="row">
+            <!-- logo -->
+            <div class="col-xs-12 col-sm-4"></div>
+            <div class="navbar-header col-xs-6 col-sm-4"> <a class="navbar-brand" href="index.html"> <img alt="themini" src="images/logo.png"> </a> </div>
+            <div class="col-xs-6 col-sm-4 shopcart"></div>
+          </div>
+        </div>
+      </div>
+    </header>
+    <!-- =====  HEADER END  ===== -->
+    <div class="col-sm-8 col-lg-9 mtb_20 about">
+      <div class="row ">
+        <hr><br>
+         <h1>Order placed Successfully</h1>
+         <h3>Your order will be delivered soon</h3><br><hr><br><hr><br>
+         <?php if($result -> num_rows>0 ){ ?>
+            <?php  
+      // Fetch and display user details
+      if ($user_data = $result->fetch_assoc()) { ?>
+          <h4>>> USER NAME: <?php echo htmlspecialchars($_SESSION['username']); ?></h4><br>
+          <h4>>> PHONE NUMBER: <?php echo htmlspecialchars($user_data['phone_number']); ?></h4><br>
+          <h4>>> ADDRESS: <?php echo htmlspecialchars($user_data['address']); ?></h4><br>
+          <h4>>> LANDMARK: <?php echo htmlspecialchars($user_data['landmark']); ?></h4><br>
+          <h4>>> PIN-CODE: <?php echo htmlspecialchars($user_data['pincode']); ?></h4><br>
+          <h4>>>PAYMENT METHOD: Cash On Delivery</h4><br>
+          <h4>>>Thank you for Shopping</h4><br>
+        <?php
+      }
+      }else{ 
+        $error = "Fill your personal details before ordering";
+        header("Location: /DARKLOOK/userdetail.html?msg=$error");
+      }
+      $stmt->close();
+      $conn->close();
+      ?> 
+      <br><hr>
+      <h3 style="text-align: center;">>>You product will be delivered in 7 days<<</h3> 
+      </div>
+  </div>
+    
+
+  <a id="scrollup"></a>
+  <script src="js/jQuery_v3.1.1.min.js"></script>
+  <script src="js/owl.carousel.min.js"></script>
+  <script src="js/bootstrap.min.js"></script>
+  <script src="js/jquery.magnific-popup.js"></script>
+  <script src="js/custom.js"></script>
+</body>
+
+</html>

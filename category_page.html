@@ -1,0 +1,242 @@
+<?php
+session_start();  // Start session
+  require "db_con.php";
+  // Fetch products from the database
+  $sql = "SELECT id, product_name, model, price, image FROM product"; 
+  // Replace with your actual table and column names
+  $result = $conn->query($sql);
+?>
+            
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- =====  BASIC PAGE NEEDS  ===== -->
+  <meta charset="utf-8">
+  <title>Dark look E-commerce Bootstrap Template</title>
+  <!-- =====  SEO MATE  ===== -->
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  <meta name="distribution" content="global">
+  <meta name="revisit-after" content="2 Days">
+  <meta name="robots" content="ALL">
+  <meta name="rating" content="8 YEARS">
+  <meta name="Language" content="en-us">
+  <meta name="GOOGLEBOT" content="NOARCHIVE">
+  <!-- =====  MOBILE SPECIFICATION  ===== -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="viewport" content="width=device-width">
+  <!-- =====  CSS  ===== -->
+  <link rel="stylesheet" type="text/css" href="css/font-awesome.min.css" />
+  <link rel="stylesheet" type="text/css" href="css/bootstrap.css" />
+  <link rel="stylesheet" type="text/css" href="css/style.css">
+  <link rel="stylesheet" type="text/css" href="css/magnific-popup.css">
+  <link rel="stylesheet" type="text/css" href="css/owl.carousel.css">
+  <link rel="stylesheet" type="text/css" href="css/jquery-ui.css">
+  <link rel="shortcut icon" href="images/favicon.png">
+  <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+  <link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
+  <link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">
+  <style>
+    .image {
+      width: 225px;
+      height: auto; 
+      /* text-align: center; */
+    }
+    .about {
+      align-items: center;
+      margin-left: 13%;
+      margin-right: 10%;
+    }
+  </style>
+</head>
+<body>
+  <!-- =====  LODER  ===== -->
+  <div class="loder"></div>
+  <div class="wrapper">
+
+    <!-- ===== notification ==== -->
+    <?php
+    if (isset($_GET['msg'])) {
+      $error = $_GET['msg'];
+      if (strlen($error) > 1) {
+        echo '<div class="alert alert-success">
+          <strong>'.$error.'</strong></div>';
+      }
+    }
+    ?>
+    <!-- =====  HEADER START  ===== -->
+    <header id="header">
+      <div class="header-top">
+        <div class="container">
+          <div class="row">
+            <div class="col-xs-12 col-sm-4">
+              <div class="header-top-left">
+                <div class="contact"><span class="hidden-xs hidden-sm hidden-md"></span></div>
+              </div>
+            </div>
+            <div class="col-xs-12 col-sm-8">
+              <ul class="header-top-right text-right">
+                <li class="account"><a href="login.html">My Account</a></li>
+                <li class="language dropdown"> <span class="dropdown-toggle" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" role="button">Language <span class="caret"></span> </span>
+                  <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                    <li><a href="#">English</a></li>
+                  </ul>
+                </li>
+                <li class="currency dropdown"> <span class="dropdown-toggle" id="dropdownMenu12" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" role="button">Currency <span class="caret"></span> </span>
+                  <ul class="dropdown-menu" aria-labelledby="dropdownMenu12">
+                    <li><a href="#">€ Euro</a></li>
+                  </ul>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="header">
+        <div class="container">
+          <div class="row">
+            <!-- logo -->
+            <div class="col-xs-12 col-sm-4"></div>
+            <div class="navbar-header col-xs-6 col-sm-4"> <a class="navbar-brand" href="index.html"> <img alt="themini" src="images/logo.png"> </a> </div>
+            <div class="col-xs-6 col-sm-4 shopcart"></div>
+          </div>   
+          <nav class="navbar">
+            <p>menu</p>
+            <button class="navbar-toggle" type="button" data-toggle="collapse" data-target=".js-navbar-collapse"> <span class="i-bar"><i class="fa fa-bars"></i></span></button>
+            <div class="collapse navbar-collapse js-navbar-collapse">
+              <ul id="menu" class="nav navbar-nav">
+                <li> <a href="index.html">Home</a></li>
+                <li> <a href="category_page.html">Shop</a></li>
+                <li> <a href="cart_page.html">Cart</a></li>
+                <li> <a href="wishlist.html">Wishlist</a></li>
+                <li> <a href="contact.html">Contact us</a></li>
+              </ul>
+            </div>
+            <!-- /.nav-collapse -->
+          </nav>
+        </div>
+      </div>
+    </header>
+    <!-- =====  HEADER END  ===== -->
+    <!-- =====  CONTAINER START  ===== -->
+    <div class="container">
+      <div class="row ">
+        <!-- =====  BANNER STRAT  ===== -->
+        <div class="col-sm-12">
+          <div class="breadcrumb ptb_20">
+            <h1>Products</h1>
+            <ul>
+              <li><a href="index.html">Home</a></li>
+              <li class="active">Products</li>
+            </ul>
+          </div>
+        </div>    
+        <div class="col-sm-8 col-lg-9 mtb_20 about">
+          <div class="row ">
+                    <?php
+                    if ($result->num_rows > 0) {
+                        while ($product = $result->fetch_assoc()) {
+                            ?>
+                              <div class="product-layout product-grid col-md-4 col-xs-6">
+                                  <div class="item">
+                                      <div class="product-thumb clearfix mb_30" style="overflow: visible;">
+                                        <!-- Product Image Block -->
+                                        <div class="image product-imageblock" style="margin:auto ;">
+                                            <a href="product_detail_page.html?id=<?php echo htmlspecialchars($product['id']); ?>">
+                                                <img src="images/product/<?php echo htmlspecialchars($product['image']); ?>" alt="iPod Classic" title="iPod Classic" 
+                                                    class="img-responsive" /><img src="images/product/<?php echo htmlspecialchars($product['image']); ?>" alt="iPod Classic" title="iPod Classic" class="img-responsive" /> 
+                                            </a>
+                                        </div>
+                                        <!-- Product Caption -->
+                                        <div class="caption product-detail text-center">
+                                            <?php echo htmlspecialchars($product['product_name']); ?>
+                                            <!-- "><?php echo htmlspecialchars($product['product_name']); ?> -->
+                                             <br>
+                                            <span class="currencySymbol">$</span><?php echo number_format($product['price'], 2); ?>
+                                            <br>
+                                            <div class="col-xs-6" style="text-align: right; "><a href="wishlist.php?id=<?php echo $product['id']; ?>"><button type="button" class="btn btn-dark" style="border-radius: 120px; background-color: rgb(142, 142 ,142);"> <span>Wishlist</span></button></a></div>
+                                            <div class="col-xs-6" style="text-align: right;"><a href="add_to_cart.php?id=<?php echo $product['id']; ?>&price=<?php echo $product['price']; ?>"><button type="button" class="btn btn-dark" style="border-radius: 120px;background-color: rgb(142, 142 ,142);"> <span>Add To Cart</span></button></a></div>            
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <?php
+                        }
+                    } else {
+                        echo "<p>No products available.</p>";
+                    }
+                    ?>
+            <?php
+            // Close database connection
+            $conn->close();
+            ?>       
+          </div>
+        </div>
+      </div>
+    </div> 
+    <!-- =====  CONTAINER END  ===== -->
+    <!-- =====  FOOTER START  ===== -->
+    <div class="footer pt_60">
+      <div class="container">
+        <div class="col-md-3 footer-block"></div>
+
+        <div class="row">
+          <div class="col-md-3 footer-block">
+            <h6 class="footer-title ptb_20">Information</h6>
+            <ul>
+              <li><a href="about.html">About Us</a></li>
+              <li><a href="checkout_page.html">Delivery Information</a></li>
+              <li><a href="#">Privacy Policy</a></li>
+              <li><a href="#">Terms & Conditions</a></li>
+              <li><a href="contact.html">Contact Us</a></li>
+            </ul>
+          </div>
+
+          <div class="col-md-3 footer-block">
+            <h6 class="footer-title ptb_20">Contacts</h6>
+            <ul>
+              <li>Warehouse & Offices,</li>
+              <li>12345 Street name, California USA</li>
+              <li>(+024) 666 888</li>
+              <li>yourid@domain.com</li>
+              <li><a href="#">www.yoursite.com</a></li>
+            </ul>
+          </div>
+
+          <div class="col-md-3 footer-block"></div>          
+        </div>
+      </div>
+      
+      <div class="footer-bottom mt_60 ptb_20">
+        <div class="container">
+        </div>
+      </div>
+    </div>
+    <!-- =====  FOOTER END  ===== -->
+  </div>
+  <a id="scrollup"></a>
+  <script src="js/jQuery_v3.1.1.min.js"></script>
+  <script src="js/owl.carousel.min.js"></script>
+  <script src="js/bootstrap.min.js"></script>
+  <script src="js/jquery.magnific-popup.js"></script>
+  <script src="js/custom.js"></script>
+  <script src="js/jquery-ui.js"></script>
+  <script>
+  $(function() {
+    $("#slider-range").slider({
+      range: true,
+      min: 0,
+      max: 500,
+      values: [75, 300],
+      slide: function(event, ui) {
+        $("#amount").val("$" + ui.values[0] + " - $" + ui.values[1]);
+      }
+    });
+    $("#amount").val("$" + $("#slider-range").slider("values", 0) +
+      " - $" + $("#slider-range").slider("values", 1));
+  });
+  </script>    
+</body>
+
+</html>

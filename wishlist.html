@@ -1,0 +1,177 @@
+<?php
+session_start();
+require "db_con.php"; // Database connection
+
+// Database connection check
+if ($conn->connect_error) {
+    die('Connection failed: ' . $conn->connect_error);
+}
+
+// Check if the user is logged in
+if (isset($_SESSION['user_id'])) {
+  $user_id = $_SESSION['user_id'];
+
+  // Fetch products added to cart by the user
+  $query = "
+      SELECT p.product_name, p.price, p.image, p.model,p.id
+      FROM wishlist w
+      JOIN product p ON w.product_id = p.id 
+      WHERE w.user_id = ?
+  ";
+  $stmt = $conn->prepare($query);
+  $stmt->bind_param("i", $user_id);
+  $stmt->execute();
+  $result = $stmt->get_result();
+}
+else {
+    $error = "Please log in to view your cart.";
+    header ("Location: /DARKLOOK/login.html?msg=$error");
+}
+?>
+<!DOCTYPE html>
+<!--[if (gte IE 9)|!(IE)]><!-->
+<html lang="en">
+<!--<![endif]-->
+<head>
+  <!-- =====  BASIC PAGE NEEDS  ===== -->
+  <meta charset="utf-8">
+  <title>Dark look E-commerce Bootstrap Template</title>
+  <!-- =====  SEO MATE  ===== -->
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  <meta name="distribution" content="global">
+  <meta name="revisit-after" content="2 Days">
+  <meta name="robots" content="ALL">
+  <meta name="rating" content="8 YEARS">
+  <meta name="Language" content="en-us">
+  <meta name="GOOGLEBOT" content="NOARCHIVE">
+  <!-- =====  MOBILE SPECIFICATION  ===== -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="viewport" content="width=device-width">
+  <!-- =====  CSS  ===== -->
+  <link rel="stylesheet" type="text/css" href="css/font-awesome.min.css" />
+  <link rel="stylesheet" type="text/css" href="css/bootstrap.css" />
+  <link rel="stylesheet" type="text/css" href="css/style.css">
+  <link rel="stylesheet" type="text/css" href="css/magnific-popup.css">
+  <link rel="stylesheet" type="text/css" href="css/owl.carousel.css">
+  <link rel="shortcut icon" href="images/favicon.png">
+  <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+  <link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
+  <link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">
+<style>.about {
+  align-items: center;
+  margin-left: 13%;
+  margin-right: 10%;
+}</style>
+</head>
+<body>
+  <!-- =====  LODER  ===== -->
+  <div class="loder"></div>
+  <div class="wrapper">
+   <!-- =====  HEADER START  ===== -->
+   <header id="header">
+    <div class="header-top">
+      <div class="container">
+        <div class="row">
+          <div class="col-xs-12 col-sm-4">
+            <div class="header-top-left">
+              <div class="contact"><span class="hidden-xs hidden-sm hidden-md"></span></div>
+            </div>
+          </div>
+          <div class="col-xs-12 col-sm-8">
+            <ul class="header-top-right text-right">
+              <li class="account"><a href="login.html">My Account</a></li>
+              <li class="language dropdown"> <span class="dropdown-toggle" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" role="button">Language <span class="caret"></span> </span>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                  <li><a href="#">English</a></li>
+                </ul>
+              </li>
+              <li class="currency dropdown"> <span class="dropdown-toggle" id="dropdownMenu12" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" role="button">Currency <span class="caret"></span> </span>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenu12">
+                  <li><a href="#">€ Euro</a></li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="header">
+      <div class="container">
+        <div class="row">
+          <!-- logo -->
+          <div class="col-xs-12 col-sm-4"></div>
+          <div class="navbar-header col-xs-6 col-sm-4"> <a class="navbar-brand" href="index.html"> <img alt="themini" src="images/logo.png"> </a> </div>
+          <div class="col-xs-6 col-sm-4 shopcart"></div>
+        </div>      
+        <nav class="navbar">
+          <p>menu</p>
+          <button class="navbar-toggle" type="button" data-toggle="collapse" data-target=".js-navbar-collapse"> <span class="i-bar"><i class="fa fa-bars"></i></span></button>
+          <div class="collapse navbar-collapse js-navbar-collapse">
+            <ul id="menu" class="nav navbar-nav">
+              <li> <a href="index.html">Home</a></li>
+              <li> <a href="category_page.html">Shop</a></li>
+              <li> <a href="cart_page.html">Cart</a></li>
+              <li> <a href="contact.html">Contact us</a></li>
+            </ul>
+          </div>
+          <!-- /.nav-collapse -->
+        </nav>
+      </div>
+    </div>
+  </header>
+  <!-- =====  HEADER END  ===== -->
+    <!-- =====  CONTAINER START  ===== -->
+    <div class="container">
+      <div class="row ">
+        <!-- =====  BANNER STRAT  ===== -->
+        <div class="col-sm-12 about" >
+          <div class="breadcrumb ptb_20 tital" >
+            <h1>Wishlist</h1>
+          </div>
+        </div>       
+        <!-- =====  BREADCRUMB END===== -->
+        <div class="col-sm-8 col-lg-9 mtb_20 about">
+            <form enctype="multipart/form-data" method="post" action="#">
+              <?php if($result->num_rows > 0){?>
+                <?php while ($row = $result->fetch_assoc()) {?>
+                  <div class="table-responsive">
+                    <div class="col-xs-6" style="text-align: center; "><img src="images/product/<?php echo htmlspecialchars($row['image']); ?>" alt="<?php echo htmlspecialchars($row['product_name']); ?>" width="150px" height="auto"></div>
+                    <div class="col-xs-6" style="text-align: left;"><br>
+                        > Product Name: <?php echo htmlspecialchars($row['product_name']); ?><br>> Model: <?php echo htmlspecialchars($row['model']); ?><br>> Price: $<?php echo htmlspecialchars($row['price']); ?><br>
+                        <div class="col-xs-6" style="text-align: left;"><a href="add_to_cart.php?id=<?php echo $row['id']; ?>&price=<?php echo $row['price']; ?>"><button type="button" class="btn btn-dark" style="background-color: rgb(142, 142, 142); border-radius: 120px ;"> <span>Add To Cart</span></button></a></div>
+                        <div class="col-xs-6" style="text-align: left; "> 
+                          <a href="buynow.html"><button type="button" class="btn btn-dark" style="background-color: rgb(142, 142, 142); border-radius: 120px ;"><span>Buy Now </span></button></a>
+                        </div>
+                         <br><br> 
+                         <?php 
+                         $btn='wishlist';
+                         ?>
+                        <div class="col-xs-6" style="text-align: left;"><a href="remove.php?id=<?php echo $row['id'];?>&btn2=<?php echo $btn; ?>"><button type="button" class="btn btn-dark" style="background-color: rgb(255, 0, 0); border-radius: 120px;"> <span>REMOVE</span></button></a></div>
+                    </div>             
+                    </div>
+                <?php } ?>
+            <?php } else { ?>
+                <div class="col-xs-6" style="text-align: right;">No product found ! !</div>
+            <?php } ?>    
+            </form>
+        </div>
+        <?php
+        // Close the database connection
+        $conn->close();
+        ?>
+      </div> 
+    </div>
+    <!-- =====  CONTAINER END  ===== -->
+
+  </div>
+  <a id="scrollup"></a>
+  <script src="js/jQuery_v3.1.1.min.js"></script>
+  <script src="js/owl.carousel.min.js"></script>
+  <script src="js/bootstrap.min.js"></script>
+  <script src="js/jquery.magnific-popup.js"></script>
+  <script src="js/custom.js"></script>
+</body>
+
+</html>

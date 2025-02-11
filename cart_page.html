@@ -1,0 +1,245 @@
+<?php
+session_start();
+require "db_con.php"; // Database connection
+
+// Database connection check
+if ($conn->connect_error) {
+    die('Connection failed: ' . $conn->connect_error);
+}
+
+// Check if the user is logged in
+if (isset($_SESSION['user_id'])) {
+  $user_id = $_SESSION['user_id'];
+
+  // Fetch products added to cart by the user
+  $query = "
+      SELECT p.product_name, p.model, p.price, p.image, c.quantity, c.total_amount 
+      FROM cart c 
+      JOIN product p ON c.product_id = p.id 
+      WHERE c.user_id = ?
+  ";
+  $stmt = $conn->prepare($query);
+  $stmt->bind_param("i", $user_id);
+  $stmt->execute();
+  $result = $stmt->get_result();
+}
+else {
+    $error = "Please log in to view your cart.";
+    header ("Location: /DARKLOOK/login.html?msg=$error");
+}
+?>
+<!DOCTYPE html>
+<!--[if (gte IE 9)|!(IE)]><!-->
+<html lang="en">
+<!--<![endif]-->
+<head>
+  <!-- =====  BASIC PAGE NEEDS  ===== -->
+  <meta charset="utf-8">
+  <title>Dark look E-commerce Bootstrap Template</title>
+  <!-- =====  SEO MATE  ===== -->
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  <meta name="distribution" content="global">
+  <meta name="revisit-after" content="2 Days">
+  <meta name="robots" content="ALL">
+  <meta name="rating" content="8 YEARS">
+  <meta name="Language" content="en-us">
+  <meta name="GOOGLEBOT" content="NOARCHIVE">
+  <!-- =====  MOBILE SPECIFICATION  ===== -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="viewport" content="width=device-width">
+  <!-- =====  CSS  ===== -->
+  <link rel="stylesheet" type="text/css" href="css/font-awesome.min.css" />
+  <link rel="stylesheet" type="text/css" href="css/bootstrap.css" />
+  <link rel="stylesheet" type="text/css" href="css/style.css">
+  <link rel="stylesheet" type="text/css" href="css/magnific-popup.css">
+  <link rel="stylesheet" type="text/css" href="css/owl.carousel.css">
+  <link rel="shortcut icon" href="images/favicon.png">
+  <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+  <link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
+  <link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">
+  <style>
+    .about{
+      /* align-items: center; */
+      margin-left: 13%;
+      margin-right: 10%;
+    }
+    .tital{
+      margin-left: 13%;
+      margin-right: 10%;
+    }
+  </style>
+</head>
+<body>
+  <!-- =====  LODER  ===== -->
+  <div class="loder"></div>
+  <div class="wrapper">
+   <!-- =====  HEADER START  ===== -->
+   <header id="header">
+
+    <div class="header-top">
+      <div class="container">
+        <div class="row">
+          <div class="col-xs-12 col-sm-4">
+            <div class="header-top-left">
+              <div class="contact"><span class="hidden-xs hidden-sm hidden-md"></span></div>
+            </div>
+          </div>
+          <div class="col-xs-12 col-sm-8">
+            <ul class="header-top-right text-right">
+              <li class="account"><a href="login.html">My Account</a></li>
+              <li class="language dropdown"> <span class="dropdown-toggle" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" role="button">Language <span class="caret"></span> </span>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                  <li><a href="#">English</a></li>
+                </ul>
+              </li>
+              <li class="currency dropdown"> <span class="dropdown-toggle" id="dropdownMenu12" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" role="button">Currency <span class="caret"></span> </span>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenu12">
+                  <li><a href="#">€ Euro</a></li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="header">
+      <div class="container">
+        <div class="row">
+          <!-- logo -->
+          <div class="col-xs-12 col-sm-4"></div>
+          <div class="navbar-header col-xs-6 col-sm-4"> <a class="navbar-brand" href="index.html"> <img alt="themini" src="images/logo.png"> </a> </div>
+          <div class="col-xs-6 col-sm-4 shopcart"></div>
+        </div>       
+        <nav class="navbar">
+          <p>menu</p>
+          <button class="navbar-toggle" type="button" data-toggle="collapse" data-target=".js-navbar-collapse"> <span class="i-bar"><i class="fa fa-bars"></i></span></button>
+          <div class="collapse navbar-collapse js-navbar-collapse">
+            <ul id="menu" class="nav navbar-nav">
+              <li> <a href="index.html">Home</a></li>
+              <li> <a href="category_page.html">Shop</a></li>
+              <li> <a href="wishlist.html">Wishlist</a></li>
+              <li> <a href="contact.html">Contact us</a></li>
+            </ul>
+          </div>
+          <!-- /.nav-collapse -->
+        </nav>
+      </div>
+    </div>
+  </header>
+  <!-- =====  HEADER END  ===== -->
+    <!-- =====  CONTAINER START  ===== -->
+    <div class="container">
+      <div class="row ">
+        <!-- =====  BANNER STRAT  ===== -->
+        <div class="col-sm-12" >
+          <div class="breadcrumb ptb_20 tital">
+            <h1>Shopping Cart</h1>
+          </div>
+        </div>       
+        <!-- =====  BREADCRUMB END===== -->
+        <div class="col-sm-8 col-lg-9 mtb_20 about">
+            <form enctype="multipart/form-data" method="post" action="#">
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <td class="text-center">Image</td>
+                                <td class="text-left">Product Name</td>
+                                <td class="text-left">Model</td>
+                                <td class="text-left">Quantity</td>
+                                <td class="text-right">Unit Price</td>
+                                <td class="text-right">Total</td>
+                            </tr>
+                        </thead>
+                      <tbody>
+                        <?php if ($result->num_rows > 0) {
+                          $totalAmount=0; ?>
+                            <?php while ($row = $result->fetch_assoc()) {
+                              $productTotal = $row['price'] * $row['quantity']; // Calculate the total for the current product
+                              $totalAmount += $productTotal; ?>    
+                                <tr>
+                                    <td class="text-center">
+                                        <img src="images/product/<?php echo htmlspecialchars($row['image']); ?>" alt="<?php echo htmlspecialchars($row['product_name']); ?>" width="90px" height="auto">
+                                    </td>
+                                    <td><?php echo htmlspecialchars($row['product_name']); ?></td>
+                                    <td><?php echo htmlspecialchars($row['model']); ?></td>
+                                    <td>$<?php echo number_format($row['price'], 2); ?></td>
+                                    <td><?php echo htmlspecialchars($row['quantity']); ?></td>
+                                    <td>$<?php echo number_format($row['price'] * $row['quantity'], 2); ?></td>
+                                </tr>
+                                
+                            <?php } ?>
+                            <tr>
+                              <td colspan="5" class="text-right"><strong>Total Amount:</strong></td>
+                              <td class="text-right"><strong>$<?php echo number_format($totalAmount, 2); ?></strong></td>
+                          </tr>
+                        <?php } else { ?>
+                            <tr><td colspan="6" class="text-center">No products in cart.</td></tr>
+                        <?php } ?>
+                        </tbody>
+                        
+                    </table>
+                </div>
+            </form>
+            <form action="category_page.html">
+              <input class="btn pull-left mt_30" type="submit" value="Continue Shopping" />
+            </form>
+            <form action="buynow.html">
+              <input class="btn pull-right mt_30" type="submit" value="Buy Now" />
+            </form>
+        </div>
+        <?php
+        // Close the database connection
+        $conn->close();
+        ?>
+      </div> 
+    </div>
+    <!-- =====  CONTAINER END  ===== -->
+    <!-- =====  FOOTER START  ===== -->
+    <div class="footer pt_60">
+      <div class="container">
+        <div class="col-md-3 footer-block"></div>
+        <div class="row">
+          <div class="col-md-3 footer-block">
+            <h6 class="footer-title ptb_20">Information</h6>
+            <ul>
+              <li><a href="about.html">About Us</a></li>
+              <li><a href="checkout_page.html">Delivery Information</a></li>
+              <li><a href="#">Privacy Policy</a></li>
+              <li><a href="#">Terms & Conditions</a></li>
+              <li><a href="contact.html">Contact Us</a></li>
+            </ul>
+          </div>
+          <div class="col-md-3 footer-block">
+            <h6 class="footer-title ptb_20">Contacts</h6>
+            <ul>
+              <li>Warehouse & Offices,</li>
+              <li>12345 Street name, California USA</li>
+              <li>(+024) 666 888</li>
+              <li>yourid@domain.com</li>
+              <li><a href="#">www.yoursite.com</a></li>
+            </ul>
+          </div>
+          <div class="col-md-3 footer-block"></div>          
+        </div>
+      </div>     
+      <div class="footer-bottom mt_60 ptb_20">
+        <div class="container">
+        </div>
+      </div>
+    </div>
+    <!-- =====  FOOTER END  ===== -->
+  </div>
+  <a id="scrollup"></a>
+  <script src="js/jQuery_v3.1.1.min.js"></script>
+  <script src="js/owl.carousel.min.js"></script>
+  <script src="js/bootstrap.min.js"></script>
+  <script src="js/jquery.magnific-popup.js"></script>
+  <script src="js/custom.js"></script>
+</body>
+
+</html>
