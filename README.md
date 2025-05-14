@@ -1,42 +1,30 @@
-# **Darklook – E-Commerce Website**
-Darklook is a dynamic e-commerce website built as part of a DBMS project. It provides users with a seamless shopping experience, including user authentication, product browsing, and order management.
+# 🛍️ Darklook – E-Commerce Website
 
-**Features:**
-User authentication (PHP sessions & password hashing)
+**Darklook** is a dynamic and responsive e-commerce website built as part of a **DBMS project**. It provides users with a seamless online shopping experience, including authentication, product browsing, and order management.
 
-Product listing and categorization
+---
 
-Shopping cart functionality
+## 🚀 Features
 
-Secure checkout process
+- ✅ User authentication (PHP sessions & password hashing)
+- 🛒 Product listing and category-wise browsing
+- 🛍️ Shopping cart functionality
+- 🔒 Secure checkout process
+- 📱 Fully responsive design using HTML, CSS, and JavaScript
+- 💾 Backend integration with MySQL
 
-Responsive design using HTML, CSS, and JavaScript
+---
 
-Database integration with MySQL
+## 🛠️ Tech Stack
 
-**Tech Stack:**
-Frontend: HTML, CSS, JavaScript
+- **Frontend:** HTML, CSS, JavaScript  
+- **Backend:** PHP  
+- **Database:** MySQL
 
-Backend: PHP
+---
 
-Database: MySQL
+## ⚙️ Setup Instructions
 
-**Setup Instructions:**
-
-Clone the repository: git clone https://github.com/SaideepGaunker/darklook_ecommerce.git
-
-Import the database (darklook.sql) into MySQL.
-
-Configure the database connection in config.php.
-
-Start a local server (e.g., using XAMPP).
-
-Open the project in your browser.
-
-**Future Improvements:**
-
-Password reset functionality
-
-Role-based access control (Admin & User)
-
-Enhanced security features
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/SaideepGaunker/darklook_ecommerce.git
